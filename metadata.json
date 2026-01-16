@@ -1,0 +1,5 @@
+{
+  "name": "LLS server",
+  "description": "Admin dashboard for Pterodactyl server management, maintenance control, and Discord announcements.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,92 @@
+@if (!user()) {
+  <app-login></app-login>
+} @else {
+  <div class="flex h-screen bg-gray-900 text-gray-100">
+    <aside class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
+      <div class="p-6 border-b border-gray-700">
+        <h1 class="text-xl font-bold flex items-center gap-2">
+          <i class="fa-solid fa-cube text-blue-500"></i> LLS 伺服器維護系統
+        </h1>
+      </div>
+
+      <nav class="flex-1 p-4 space-y-2">
+        <button
+          (click)="setView('dashboard')"
+          [class.bg-gray-700]="currentView() === 'dashboard'"
+          class="w-full text-left px-4 py-3 rounded hover:bg-gray-700 transition flex items-center gap-3 text-gray-300 hover:text-white"
+        >
+          <i class="fa-solid fa-gauge-high w-5"></i> 儀表板
+        </button>
+
+        <button
+          (click)="setView('maintenance')"
+          [class.bg-gray-700]="currentView() === 'maintenance'"
+          class="w-full text-left px-4 py-3 rounded hover:bg-gray-700 transition flex items-center gap-3 text-gray-300 hover:text-white"
+        >
+          <i class="fa-solid fa-wrench w-5"></i> 維護模式
+        </button>
+
+        <button
+          (click)="setView('announcement')"
+          [class.bg-gray-700]="currentView() === 'announcement'"
+          class="w-full text-left px-4 py-3 rounded hover:bg-gray-700 transition flex items-center gap-3 text-gray-300 hover:text-white"
+        >
+          <i class="fa-brands fa-discord w-5"></i> Discord 公告
+        </button>
+
+        <button
+          (click)="setView('config')"
+          [class.bg-gray-700]="currentView() === 'config'"
+          class="w-full text-left px-4 py-3 rounded hover:bg-gray-700 transition flex items-center gap-3 text-gray-300 hover:text-white"
+        >
+          <i class="fa-solid fa-sliders w-5"></i> 系統設定
+        </button>
+      </nav>
+
+      <div class="p-4 border-t border-gray-700">
+        <div class="flex items-center gap-3 mb-4 px-2">
+          <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold">
+            {{ user()?.email?.charAt(0)?.toUpperCase() }}
+          </div>
+          <div class="overflow-hidden">
+            <p class="text-sm font-medium truncate">{{ anonymizedEmail() }}</p>
+            <p class="text-xs text-gray-500">管理員</p>
+          </div>
+        </div>
+        <button (click)="api.logout()" class="w-full bg-red-900/50 hover:bg-red-900 text-red-200 py-2 rounded text-sm transition">
+          <i class="fa-solid fa-right-from-bracket"></i> 登出
+        </button>
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0">
+      <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center lg:hidden">
+        <span class="font-bold">LLS 伺服器維護系統</span>
+        <button class="text-gray-400"><i class="fa-solid fa-bars"></i></button>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-6 md:p-8 relative">
+        @switch (currentView()) {
+          @case ('dashboard') { <app-dashboard-home></app-dashboard-home> }
+          @case ('maintenance') { <app-maintenance></app-maintenance> }
+          @case ('announcement') { <app-announcement></app-announcement> }
+          @case ('config') { <app-config></app-config> }
+        }
+      </div>
+
+      <div class="bg-black border-t border-gray-700 h-48 overflow-hidden flex flex-col">
+        <div class="bg-gray-800 px-4 py-1 text-xs text-gray-400 font-mono border-b border-gray-700 flex justify-between">
+          <span>> 系統主控台</span>
+          <span>即時</span>
+        </div>
+        <div class="p-2 overflow-y-auto font-mono text-xs space-y-1 h-full">
+          @for (log of logs(); track $index) {
+            <div class="text-green-400 hover:bg-gray-900 px-1 rounded">{{ log }}</div>
+          } @empty {
+            <div class="text-gray-600 italic">等待系統事件...</div>
+          }
+        </div>
+      </div>
+    </main>
+  </div>
+}
